@@ -1,0 +1,74 @@
+---
+title: "a3_task3_chelsie_mcwhorter"
+author: "Chelsie McWhorter"
+date: "10/26/2021"
+output: 
+  html_document: 
+    toc: yes
+    theme: yeti
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
+library(tidyverse)
+library(here)
+library(janitor)
+library(kableExtra)
+```
+
+## Part 1: Introduction & Exploring Urchin Data in R
+
+1.1 Using a data file on sea urchins provided by the [Santa Barbara Coastal LTER](https://sbclter.msi.ucsb.edu/data/catalog/package/?package=knb-lter-sbc.26), I'll review the data to get an idea of what is present. Then I'll follow the prompts to visualize it, compile descriptive statistics and summarize what I've found. 
+
+Data citation: Reed, D, R. Miller. 2021. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 21. Environmental Data Initiative. https://doi.org/10.6073/pasta/fd564dddfe7b77fe9e4bd8417f166057. Accessed 2021-10-28.
+
+```{r}
+urchins <- read_csv(here("data" , "urchins.csv")) %>% #reading in the data file 
+  clean_names() # change headers to lower snakecase 
+
+#viewing the data via console `view(urchins)` to get an overview of what it contains.
+
+```
+
+
+### Section 1: Now that I've reviewed the data I'll start with "Section 1" of the assignment.
+
+#### *Sub-section i:*  Data visualization.
+
+
+```{r}
+ggplot(data = urchins, aes(x = size)) +
+  geom_histogram(aes(color = common_name), bins = 10) + #I spent probably too much time trying to figure out how to make the 'purple urchin' plot fill with purple, and the "red urchin' plot fill with red, but couldn't figure it out. 
+  facet_wrap(~ common_name) +
+  theme_minimal() +
+  labs(x = "size (cm)", y = "count",
+       title = "Histogram of Urchin Species by their Common Names - McWhorter",
+       caption = "A histogram of urchin species by their common name. Data provided from Reed, D, R. Miller. 2021." 
+       )
+  
+```
+
+#### *Sub-section ii:* Descripitve statistics table:
+
+Now I'll compile some descriptive statistics for the urchin data.
+
+```{r}
+urchin_stats <- urchins %>% 
+  group_by(common_name) %>% 
+  summarize(mean_size_cm = mean(size),
+            median_size_cm = median(size),
+            sd_size = sd(size),
+            samplesize = n())
+
+#Now I'll try to make it nicer looking via 'kableextra':
+
+urchin_stats %>% 
+  kable(col.names = c("Common Name",
+                      "Mean Size (cm)",
+                      "Median Size (cm)",
+                      "Standard Deviation",
+                      "Sample Size (n)")) %>% 
+  kable_styling(position = "center", full_width = FALSE)
+```
+
+**Takeaways:** On average purple urchins tend to be shorter in length than their purple counterparts, mean lengths of `r urchin_stats$mean_size_cm` respectively. 
