@@ -1,0 +1,61 @@
+---
+title: "as_task4_chelsie_mcwhorter"
+author: "Chelsie McWhorter"
+date: "10/29/2021"
+output: 
+  html_document: 
+    toc: yes
+    theme: yeti
+---
+
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
+library(tidyverse)
+library(here)
+library(janitor)
+library(kableExtra)
+library(lubridate)
+```
+
+# Assignment 3, Task 4: Naples Reef Purple Urchins
+
+
+Introduction: Using a data file on sea urchins provided by the [Santa Barbara Coastal LTER](https://sbclter.msi.ucsb.edu/data/catalog/package/?package=knb-lter-sbc.26), I'll review how removal of kelp in Naples Reef in 2010 influenced purple sea urchins. 
+
+Data citation: Reed, D, R. Miller. 2021. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 21. Environmental Data Initiative. https://doi.org/10.6073/pasta/fd564dddfe7b77fe9e4bd8417f166057. Accessed 2021-10-28.
+
+## Task 1:
+
+I'll read in the data and work to create dataframes that allow me to compare the mean size of purple urchins at the Naples Reef location. 
+
+#### *Subsection a:* Mean Size comparisons of purple urchins when considering retaining or removal of kelp. 
+
+In this section I'll do the following:
+
+- read in and clean the data
+- view it to get a handle on how I'll wrangle it (via console: `view(purple_naplesreef)`)
+- pull out data for the year 2010
+- pull out data for only purple urchins
+- pull out data for only the Naples Reef location 
+
+
+```{r}
+purple_naplesreef <- read_csv(here("data", "urchins.csv")) %>% 
+  clean_names() %>% 
+  filter(common_name == "Purple Urchin") %>% 
+  mutate(date_correct = mdy(date)) %>% 
+  mutate(year = year(date_correct)) %>% 
+  filter(site == "NAPL")
+```
+
+Now that the above stps have been carried out, I'll run `unique(purple_naplesreef$site)` and `unique(purple_naplesreef$common_name)` in the console to confirm that the site and type of urchin I've attempted to filter did, in fact, work. I'll also view the dataframe as a whole to ensure it looks how I expect it to look. 
+
+#### *Subsection b:* Exploratory Plots of the `purple_naplesreef` data.
+
+I'll use the dataframe `purple_naplesreef` to create histograms and QQ plots displaying the size of purple urchins at the Naples Reef site for 2010, taking into consideration the treatment status (control or annual).
+
+```{r}
+
+```
+
