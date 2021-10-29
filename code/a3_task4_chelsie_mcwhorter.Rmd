@@ -1,11 +1,12 @@
 ---
-title: "as_task4_chelsie_mcwhorter"
+title: "a3_task4_chelsie_mcwhorter"
 author: "Chelsie McWhorter"
 date: "10/29/2021"
 output: 
   html_document: 
     toc: yes
     theme: yeti
+    toc_depth: 5
 ---
 
 
@@ -25,9 +26,10 @@ Introduction: Using a data file on sea urchins provided by the [Santa Barbara Co
 
 Data citation: Reed, D, R. Miller. 2021. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 21. Environmental Data Initiative. https://doi.org/10.6073/pasta/fd564dddfe7b77fe9e4bd8417f166057. Accessed 2021-10-28.
 
-## Task 1:
+## Task 4:
 
 I'll read in the data and work to create dataframes that allow me to compare the mean size of purple urchins at the Naples Reef location. 
+
 
 #### *Subsection a:* Mean Size comparisons of purple urchins when considering retaining or removal of kelp. 
 
@@ -49,13 +51,59 @@ purple_naplesreef <- read_csv(here("data", "urchins.csv")) %>%
   filter(site == "NAPL")
 ```
 
-Now that the above stps have been carried out, I'll run `unique(purple_naplesreef$site)` and `unique(purple_naplesreef$common_name)` in the console to confirm that the site and type of urchin I've attempted to filter did, in fact, work. I'll also view the dataframe as a whole to ensure it looks how I expect it to look. 
+Now that the above steps have been carried out, I'll run `unique(purple_naplesreef$site)` and `unique(purple_naplesreef$common_name)` in the console to confirm that the site and type of urchin I've attempted to filter did, in fact, work. I'll also view the dataframe as a whole to ensure it looks how I expect it to look. 
+
+
 
 #### *Subsection b:* Exploratory Plots of the `purple_naplesreef` data.
 
 I'll use the dataframe `purple_naplesreef` to create histograms and QQ plots displaying the size of purple urchins at the Naples Reef site for 2010, taking into consideration the treatment status (control or annual).
 
-```{r}
+**Histogram:**
 
+```{r}
+ggplot(data = purple_naplesreef, aes(x =size)) +
+  geom_histogram(bins = 10) +
+  facet_wrap(~ treatment)
 ```
 
+**QQ Plot**
+
+```{r}
+ggplot(data = purple_naplesreef, aes(sample = size)) +
+  geom_qq() +
+  facet_wrap(~treatment)
+```
+
+**Summary:** Overall, I do not see much of a difference between the control and annual groups. The histograms show nearly identical data, with a higher count for the mid-size purple urchins (between 4 -6 cm). The qqplots show a fairly normal distribution (and are nearly identical).
+
+
+
+#### *Subsection c:* Descriptive statistics summary table
+
+In this final section, I'll create a table to display the mean, standard deviation and sample size for each treatment group. 
+
+First, I'll write the code to create the table:
+
+```{r}
+purple_naplesreef_stats <- purple_naplesreef %>% 
+  group_by(treatment) %>% 
+  summarize(mean_sizecm = mean(size),
+            median_sizecm = median(size),
+            sd_size = sd(size),
+            samplesize = n())
+```
+
+Now that I have the table created, I'll make it more friendly to look at:
+
+```{r}
+purple_naplesreef_stats %>% 
+  kable(col.names = c("Treatment",
+                      "Mean size (cm)",
+                      "Median size (cm)", 
+                      "Standard Deviation",
+                      "Sample Size (n)")) %>%
+  kable_styling(position = "center", full_width = FALSE)
+```
+
+### Woo! Assignment 3, task 4 is *finito*! 
