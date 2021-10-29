@@ -6,6 +6,7 @@ output:
   html_document: 
     toc: yes
     theme: yeti
+    toc_depth: 5
 ---
 
 ```{r setup, include=FALSE, message=FALSE, warning=FALSE}
@@ -23,6 +24,9 @@ Introduction: Using a data file on sea urchins provided by the [Santa Barbara Co
 
 Data citation: Reed, D, R. Miller. 2021. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 21. Environmental Data Initiative. https://doi.org/10.6073/pasta/fd564dddfe7b77fe9e4bd8417f166057. Accessed 2021-10-28.
 
+
+**Reading in the data:**
+
 ```{r}
 urchins <- read_csv(here("data" , "urchins.csv")) %>% #reading in the data file 
   clean_names() # change headers to lower snakecase 
@@ -36,6 +40,7 @@ urchins <- read_csv(here("data" , "urchins.csv")) %>% #reading in the data file
 
 #### *Sub-section i:*  Data visualization.
 
+Below I'll create a histogram to see how the data are distributed.
 
 ```{r}
 ggplot(data = urchins, aes(x = size)) +
@@ -76,7 +81,7 @@ urchin_stats %>%
 
 _(In this section I'll practice using inline `"r coding"` to discuss the data.)_
 
-On average purple urchins tend to be smaller in diameter than their purple counterparts, with mean diameter of `r round(urchin_stats$mean_size_cm, 2)` respectively. Overall, when I glance at the descriptive statistics in table form I would think that they're fairly normally distributed; for example the mean and medians of each species aren't too far away from each other. In addition, the standard deviations of purple (sd = `r round(urchin_stats$sd_size[1], 2)`) and red urchins (sd = `r round(urchin_stats$sd_size[2], 2)`) aren't too different. It's only when I look at the histograms that I see the slight positive skew of the purple urchin data. Overall, on average, red urchins have a larger diamter by `r round(urchin_stats$sd_size[2] - urchin_stats$sd_size[1], 2)` centimeters. 
+On average purple urchins tend to be smaller in diameter than their purple counterparts, with mean diameter of `r round(urchin_stats$mean_size_cm, 2)` respectively. Overall, when I glance at the descriptive statistics in table form I would think that they're fairly normally distributed; for example the mean and medians of each species aren't too far away from each other. In addition, the standard deviations of purple (sd = `r round(urchin_stats$sd_size[1], 2)`) and red urchins (sd = `r round(urchin_stats$sd_size[2], 2)`) aren't too different. It's only when I look at the histograms that I see the slight positive skew of the purple urchin data. Overall, on average, red urchins have a larger diameter by `r round(urchin_stats$sd_size[2] - urchin_stats$sd_size[1], 2)` centimeters. 
 
 
 ### Section 2: Exploring purple urchin counts by site and year. 
@@ -86,7 +91,7 @@ On average purple urchins tend to be smaller in diameter than their purple count
 - Filter to only include observations for purple urchins
 - Convert the date to class “Date” 
 - Create a new column that only contains the year
-- Create a new column called site_full that contains the full name (not abbreviation) for each of the fve sites
+- Create a new column called site_full that contains the full name (not abbreviation) for each of the ! sites
 
 ```{r}
 purple_urchins <- urchins %>% 
@@ -126,6 +131,25 @@ ggplot(data = purple_urchins_counts, aes(x = year, y = count)) +
        y = "Number of Purple Urchins Observed",
        title = "Number of Purple Urchins Observed by Locale and Year - McWhorter",
        fill = "Site Name",
-       caption = "Purple Urchin observations for each site over time. Data from Reed, D, R. Miller. 2021")
+       caption = "Purple Urchin observations for each site over time. Data from Reed, D, R. Miller. 2021.")
 ```
 
+#### *Subsection iv:* Analysis of the graph.
+
+**Question:** *What would you have to take into account to determine whether the changes in counts by year are reflective of actual changes in urchin population?* 
+
+ - Total population of urchins beyond our sample data collected.
+
+**Question:** *What else could explain the changes in number of purple urchins observed?* 
+
+Ideas:*
+
+- Equipment calibration and use on data collection days;
+- Number of research assistants / personnel available to collect data from equipment / instruments;
+- Clarity of the water on data collection days
+
+
+*Disclaimer: as primarily a human geographer, I'm not super familiar with how these types of data are collected, so I apologize if my responses are ignorant.
+
+
+### Assignment 3, Task 3 is complete. 
