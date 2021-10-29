@@ -14,11 +14,12 @@ library(tidyverse)
 library(here)
 library(janitor)
 library(kableExtra)
+library(lubridate)
 ```
 
 ## Part 1: Introduction & Exploring Urchin Data in R
 
-1.1 Using a data file on sea urchins provided by the [Santa Barbara Coastal LTER](https://sbclter.msi.ucsb.edu/data/catalog/package/?package=knb-lter-sbc.26), I'll review the data to get an idea of what is present. Then I'll follow the prompts to visualize it, compile descriptive statistics and summarize what I've found. 
+Introduction: Using a data file on sea urchins provided by the [Santa Barbara Coastal LTER](https://sbclter.msi.ucsb.edu/data/catalog/package/?package=knb-lter-sbc.26), I'll review the data to get an idea of what is present. Then I'll follow the prompts to visualize it, compile descriptive statistics and summarize what I've found. 
 
 Data citation: Reed, D, R. Miller. 2021. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 21. Environmental Data Initiative. https://doi.org/10.6073/pasta/fd564dddfe7b77fe9e4bd8417f166057. Accessed 2021-10-28.
 
@@ -31,7 +32,7 @@ urchins <- read_csv(here("data" , "urchins.csv")) %>% #reading in the data file
 ```
 
 
-### Section 1: Now that I've reviewed the data I'll start with "Section 1" of the assignment.
+### Section 1: Size comparisons of purple and red urchins
 
 #### *Sub-section i:*  Data visualization.
 
@@ -71,4 +72,54 @@ urchin_stats %>%
   kable_styling(position = "center", full_width = FALSE)
 ```
 
-**Takeaways:** On average purple urchins tend to be shorter in length than their purple counterparts, mean lengths of `r urchin_stats$mean_size_cm` respectively. 
+#### *Sub-section iii :* Takeaways: 
+
+_(In this section I'll practice using inline `"r coding"` to discuss the data.)_
+
+On average purple urchins tend to be smaller in diameter than their purple counterparts, with mean diameter of `r round(urchin_stats$mean_size_cm, 2)` respectively. Overall, when I glance at the descriptive statistics in table form I would think that they're fairly normally distributed; for example the mean and medians of each species aren't too far away from each other. In addition, the standard deviations of purple (sd = `r round(urchin_stats$sd_size[1], 2)`) and red urchins (sd = `r round(urchin_stats$sd_size[2], 2)`) aren't too different. It's only when I look at the histograms that I see the slight positive skew of the purple urchin data. Overall, on average, red urchins have a larger diamter by `r round(urchin_stats$sd_size[2] - urchin_stats$sd_size[1], 2)` centimeters. 
+
+
+### Section 2: Exploring purple urchin counts by site and year. 
+
+#### *Subsection i:* Creating a subset of purple urchins with the following condiditons: 
+
+- Filter to only include observations for purple urchins
+- Convert the date to class “Date” 
+- Create a new column that only contains the year
+- Create a new column called site_full that contains the full name (not abbreviation) for each of the fve sites
+
+```{r}
+purple_urchins <- urchins %>% 
+  filter(common_name == "Purple Urchin") %>% 
+  mutate(date_correct = mdy(date)) %>%  #convert 'date' column to class(date) and check in console "class(purple_urchins$date_correct)"
+  mutate(year = year(date_correct)) %>%  # pull out just the year 
+  mutate(site_full = case_when(
+    site %in% "NAPL" ~ "Naples Reef", 
+    site %in% "AQUE" ~ "Arroyo Quemado Reef",
+    site %in% "CARP" ~ "Carpinteria Reef",
+    site %in% "MOHK" ~ "Mohawk Reef",
+    site %in% "IVEE" ~ "Isla Vista Reef"
+  ))
+  #confirm the sites are present by running unique(purple_urchins$site_full) in the console & of course view the data via view(purple_urchins) in the console.
+```
+
+#### *Subsection ii:* Total number of purple urchins observed by site & year. 
+
+In this section I'll take a look at purple urchins with consideration or both the site and the year. 
+
+```{r}
+purple_urchins_counts <- purple_urchins %>% 
+  group_by(site_full, year) %>% 
+  summarise(count = n())
+#confirm via console check of both view(purple_urchins_counts) and unique(purple_urchins_counts$site_full) &  unique(purple_urchins_counts$year)
+```
+
+#### *Subsection iii:* Make a graph! 
+
+```{r}
+ggplot(data = purple_urchins_counts) +
+  geom_bar(aes(x = site_full, y = count), stat ='identity') +
+  theme_minimal() +
+  facet_wrap(site_full)
+```
+
