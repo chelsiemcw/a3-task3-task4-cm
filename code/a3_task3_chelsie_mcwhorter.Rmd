@@ -114,12 +114,18 @@ purple_urchins_counts <- purple_urchins %>%
 #confirm via console check of both view(purple_urchins_counts) and unique(purple_urchins_counts$site_full) &  unique(purple_urchins_counts$year)
 ```
 
-#### *Subsection iii:* Make a graph! 
+#### *Subsection iii:* Make a graph of purple urchins recorded at each site over time.
 
 ```{r}
-ggplot(data = purple_urchins_counts) +
-  geom_bar(aes(x = site_full, y = count), stat ='identity') +
+ggplot(data = purple_urchins_counts, aes(x = year, y = count)) +
+  geom_bar(aes(fill = site_full), stat ='identity') +
   theme_minimal() +
-  facet_wrap(site_full)
+  theme(strip.background = element_rect(fill = 'gray')) +
+  facet_wrap(~site_full, scales = 'free') +
+  labs(x = "Year of Observation",
+       y = "Number of Purple Urchins Observed",
+       title = "Number of Purple Urchins Observed by Locale and Year - McWhorter",
+       fill = "Site Name",
+       caption = "Purple Urchin observations for each site over time. Data from Reed, D, R. Miller. 2021")
 ```
 
